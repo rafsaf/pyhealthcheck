@@ -10,17 +10,16 @@ class BaseUser(BaseModel):
 
 class User(BaseUser):
     id: int
-    email: EmailStr
+    username: str
     full_name: str
 
 
 class UserUpdate(BaseUser):
-    email: Optional[EmailStr]
+    username: Optional[str]
     password: Optional[str]
     full_name: Optional[str]
 
 
 class UserCreate(BaseUser):
-    email: EmailStr
+    username: str
     password: str
-    full_name: str

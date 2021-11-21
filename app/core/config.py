@@ -21,6 +21,7 @@ See https://pydantic-docs.helpmanual.io/usage/settings/
 
 from pathlib import Path
 from typing import Dict, List, Literal, Union
+from pydantic.main import BaseModel, BaseConfig
 
 import toml
 from pydantic import AnyHttpUrl, AnyUrl, BaseSettings, EmailStr, validator
@@ -64,7 +65,7 @@ class Settings(BaseSettings):
 
     # VALIDATORS
     @validator("BACKEND_CORS_ORIGINS")
-    def _assemble_cors_origins(cls, cors_origins):
+    def _assemble_cors_origins(cls, cors_origins: Union[str, List[str]]):
         if isinstance(cors_origins, str):
             return [item.strip() for item in cors_origins.split(",")]
         return cors_origins

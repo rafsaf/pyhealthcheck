@@ -1,5 +1,5 @@
 import asyncio
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional
 
 import pytest
 from httpx import AsyncClient
@@ -41,14 +41,18 @@ async def test_db_setup_sessionmaker():
 
 
 @pytest.fixture
-async def session(test_db_setup_sessionmaker) -> AsyncGenerator[AsyncSession, None]:
+async def session(
+    test_db_setup_sessionmaker: Any,
+) -> AsyncGenerator[AsyncSession, None]:
     async with test_db_setup_sessionmaker() as session:
         yield session
 
 
 @pytest.fixture
 async def default_user(session: AsyncSession):
-    result = await session.execute(select(User).where(User.email == "user@email.com"))
+    result = await session.execute(
+        select(User).where(User.username == "user@email.com")
+    )
     user: Optional[User] = result.scalars().first()
     if user is None:
         new_user = User(

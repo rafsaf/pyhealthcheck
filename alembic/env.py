@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+from typing import Any
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -59,7 +60,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def do_run_migrations(connection):
+def do_run_migrations(connection: Any):
     context.configure(
         connection=connection, target_metadata=target_metadata, compare_type=True
     )

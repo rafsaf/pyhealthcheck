@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.models import User
 from app.session import async_session
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="auth/access-token")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"v1/auth/access-token")
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -26,7 +26,7 @@ async def get_current_user(
 ) -> User:
 
     try:
-        payload = jwt.decode(
+        payload = jwt.decode(  # type: ignore
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
         )
         token_data = schemas.TokenPayload(**payload)

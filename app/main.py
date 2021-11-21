@@ -1,11 +1,12 @@
 """
 Main FastAPI app instance declaration
 """
-
-from fastapi import FastAPI
+from time import time
+from typing import Any
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.api import api_router
+from app.api.api_v1.api import api_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -26,4 +27,13 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-app.include_router(api_router)
+app.include_router(api_router, prefix="/v1", tags=["api_v1"])
+
+
+@app.middleware("http")  # type: ignore
+async def add_process_time_header(request: Request, call_next: Any):
+    start_time = time()
+    response = await call_next(request)
+    process_time = time() - start_time
+    response.headers["Process-Time"] = str(process_time)
+    return response
