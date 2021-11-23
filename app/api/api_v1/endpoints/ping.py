@@ -13,7 +13,7 @@ from .. import deps
 router = APIRouter(prefix="/ping")
 
 
-class ErrorResponses:
+class PingErrorResponses:
     time_out = "Timed out"
     invalid_host = "Name or service not known, invalid hostname"
     unknown = "Unknown error"
@@ -24,16 +24,14 @@ async def make_ping(hostname: str, timeout: int) -> schemas.SinglePingResponse:
     live: bool = False
     delay: Optional[float] = None
     message: str = ""
-    for i in range(3000):
-        i ** i
     try:
         delay = await aioping.ping(hostname, timeout=timeout) * 1000  # type: ignore
     except TimeoutError:
-        message = ErrorResponses.time_out
+        message = PingErrorResponses.time_out
     except _socket.gaierror:
-        message = ErrorResponses.invalid_host
+        message = PingErrorResponses.invalid_host
     except Exception:
-        message = ErrorResponses.unknown
+        message = PingErrorResponses.unknown
     else:
         message = f"Ping response in {delay} ms"
         live = True
@@ -56,7 +54,6 @@ async def make_single_ping(
     """
     Make ICMP ping to single hostname or IP address.
     """
-    print(asyncio.get_event_loop_policy())
     result = await make_ping(ping_data.hostname, timeout)
     if result.live:
         return result
@@ -76,10 +73,11 @@ async def make_many_pings(
 ):
     """
     Make ICMP pings to up to 50 hostnames or IP addresses.
+    Warning, `results` list is returned not necessarily in the order of `hostname_list`. Duplicated hostnames are ommited.
     """
     if len(ping_data.hostname_list) > 50:
         return JSONResponse(
-            status_code=400, content={"message": ErrorResponses.to_many_hostnames}
+            status_code=400, content={"message": PingErrorResponses.to_many_hostnames}
         )
     async_results: list[Coroutine[Any, Any, SinglePingResponse]] = []
 
@@ -87,13 +85,8 @@ async def make_many_pings(
         async_results.append(make_ping(hostname, timeout))
 
     ping_results = await asyncio.gather(*async_results)
-    live = 0
-    not_live = 0
-    single_ping_response: SinglePingResponse
-    for single_ping_response in ping_results:
-        if single_ping_response.live:
-            live += 1
-        else:
-            not_live += 1
+
+    live = sum((result.live for result in ping_results))
+    not_live = len(ping_results) - live
 
     return {"live": live, "not_live": not_live, "results": ping_results}

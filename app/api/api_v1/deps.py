@@ -44,7 +44,23 @@ async def get_current_user(
     return user
 
 
-async def get_current_active_user(
-    current_user: User = Depends(get_current_user),
-) -> User:
+async def get_normal_user(current_user: User = Depends(get_current_user)) -> User:
+    return current_user
+
+
+async def get_maintainer_user(current_user: User = Depends(get_current_user)) -> User:
+    if not current_user.is_maintainer and not current_user.is_root:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    return current_user
+
+
+async def get_root_user(current_user: User = Depends(get_current_user)) -> User:
+    if not current_user.is_root:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
     return current_user

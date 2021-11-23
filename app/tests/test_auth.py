@@ -30,7 +30,7 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
     )
     assert test_token.status_code == 200
     response_user = test_token.json()
-    assert response_user["email"] == default_user.email
+    assert response_user["username"] == default_user.username
 
     # refresh-token endpoint
     get_new_token = await client.post(

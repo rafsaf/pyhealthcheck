@@ -3,9 +3,9 @@ Black-box security shortcuts to generate JWT tokens and password hash/verify
 
 `subject` in access/refresh func may be antyhing unique to User account, `id` etc.
 """
-
+import re
 from datetime import datetime, timedelta
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -50,3 +50,38 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+
+def password_strong_message(password: str) -> Optional[str]:
+    """
+    Verify the strength of "password"
+
+    Returns `None` if it is strong or problem message else
+
+    A password is considered strong if:
+        8 characters length or more
+        1 digit or more
+        1 symbol or more
+        1 uppercase letter or more
+        1 lowercase letter or more
+    """
+
+    # calculating the length
+    if len(password) < 8:
+        return "Password must have 8 characters length or more"
+
+    # searching for digits
+    if re.search(r"\d", password) is None:
+        return "Password must not contain digits"
+
+    # searching for uppercase
+    if re.search(r"[A-Z]", password) is None:
+        return "Password must container at least one uppercase letter"
+
+    # searching for lowercase
+    if re.search(r"[a-z]", password) is None:
+        return "Password must container at least one lowercase letter"
+
+    # searching for symbols
+    if re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', password) is None:
+        return "Password must container at least one symbol"

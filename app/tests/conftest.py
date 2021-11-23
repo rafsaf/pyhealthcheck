@@ -56,7 +56,7 @@ async def default_user(session: AsyncSession):
     user: Optional[User] = result.scalars().first()
     if user is None:
         new_user = User(
-            email="user@email.com",
+            username="user@email.com",
             hashed_password=get_password_hash("password"),
             full_name="fullname",
         )

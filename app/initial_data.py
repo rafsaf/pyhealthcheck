@@ -21,17 +21,18 @@ async def main() -> None:
     async with async_session() as session:
 
         result = await session.execute(
-            select(User).where(User.email == settings.FIRST_SUPERUSER_EMAIL)
+            select(User).where(User.username == settings.FIRST_SUPERUSER_EMAIL)
         )
         user: Optional[User] = result.scalars().first()
 
         if user is None:
             new_superuser = User(
-                email=settings.FIRST_SUPERUSER_EMAIL,
+                username=settings.FIRST_SUPERUSER_EMAIL,
                 hashed_password=security.get_password_hash(
                     settings.FIRST_SUPERUSER_PASSWORD
                 ),
                 full_name=settings.FIRST_SUPERUSER_EMAIL,
+                is_root=True,
             )
             session.add(new_superuser)
             await session.commit()
