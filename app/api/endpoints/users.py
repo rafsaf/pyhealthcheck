@@ -3,7 +3,6 @@ from typing import Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import session
 from sqlalchemy import select
 from app import models, schemas
 from .. import deps

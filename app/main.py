@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.api_v1.api import api_router
+from app.api.api import api_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -27,7 +27,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-app.include_router(api_router, prefix="/v1", tags=["api_v1"])
+app.include_router(api_router, prefix="/v1")
 
 
 @app.middleware("http")  # type: ignore

@@ -4,14 +4,14 @@ SQL Alchemy models declaration.
 Note, imported by alembic migrations logic, see `alembic/env.py`
 """
 
-from typing import Any, cast
+from typing import Any
 
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.sql import false
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm.decl_api import declarative_base
 
 
-Base = cast(Any, declarative_base())
+Base: Any = declarative_base()
 
 
 class User(Base):
