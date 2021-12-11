@@ -58,11 +58,11 @@ jobs:
         run: |
           source .venv/bin/activate 
           # stop the build if there are Python syntax errors or undefined names
-          flake8 app tests --count --exit-zero --statistics
+          flake8 . --count --exit-zero --statistics
       - name: Test
         run: |
           source .venv/bin/activate
-          coverage run -m pytest tests
+          coverage run -m pytest
           coverage xml
           coverage report --show-missing
       - name: Upload coverage to Codecov
