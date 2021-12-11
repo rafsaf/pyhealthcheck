@@ -1,18 +1,24 @@
-from typing import List, Optional
-from pydantic import BaseModel, validator
-from pydantic.networks import EmailStr
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr, Field
 
 
 class HealthStack(BaseModel):
-    custom_name: Optional[str]
-    domains: List[str]
-    delay_between_checks_seconds: int = 10
-    emails_to_alert: List[EmailStr]
+    custom_name: Optional[str] = Field(max_length=254, min_length=3)
+    domains: list[str] = Field(min_items=1)
+    delay_between_checks: int = Field(ge=2, le=3600)
+    emails_to_alert: list[EmailStr]
 
-    @validator("delay_between_checks_seconds")
-    def check_delay_is_reasonable(cls, delay_between_checks_seconds: int):
-        if not 2 > delay_between_checks_seconds > 60:
-            raise ValueError("delay_between_checks_seconds must be between 2 and 60 ")
+    class Config:
+        schema_extra = {
+            "example": {
+                "custom_name": "Fantastic Stack",
+                "domains": ["rafsaf.pl", "registry.rafsaf.pl", "google.com"],
+                "delay_between_checks": 10,
+                "emails_to_alert": ["example@example.com"],
+            }
+        }
+        orm_mode = True
 
 
 class HealthStackCreate(HealthStack):

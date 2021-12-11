@@ -1,14 +1,13 @@
 import asyncio
 from typing import Any, Coroutine, Optional
-import aioping
+
 import _socket
+import aioping
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
 from app.schemas.ping import SinglePingResponse
-from .. import deps
 
 router = APIRouter(prefix="/ping")
 

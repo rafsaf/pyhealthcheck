@@ -1,3 +1,5 @@
+import secrets
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -7,14 +9,13 @@ from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import JSONResponse
+
 from app import schemas
-from .. import deps
 from app.core import security
 from app.core.config import settings
 from app.models import User
-from sqlalchemy import select
-import uuid
-import secrets
+
+from .. import deps
 
 router = APIRouter(prefix="/auth")
 

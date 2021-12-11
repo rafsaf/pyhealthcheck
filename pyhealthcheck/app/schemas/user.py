@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel
-from sqlalchemy.sql.sqltypes import Boolean
+from pydantic.fields import Field
 
 
 class BaseUser(BaseModel):
@@ -23,14 +23,14 @@ class UserWorkerWithPassword(User):
 
 
 class UserUpdate(BaseUser):
-    username: Optional[str]
-    password: Optional[str]
-    full_name: Optional[str]
+    username: Optional[str] = Field(max_length=254)
+    password: Optional[str] = Field(max_length=32)
+    full_name: Optional[str] = Field(max_length=254)
 
 
 class UserCreate(BaseUser):
-    username: str
-    password: str
+    username: str = Field(max_length=254)
+    password: str = Field(max_length=32)
 
 
 class WorkerUserCreate(BaseUser):
@@ -38,4 +38,4 @@ class WorkerUserCreate(BaseUser):
 
 
 class UserGet(BaseUser):
-    username: str
+    username: str = Field(max_length=254)

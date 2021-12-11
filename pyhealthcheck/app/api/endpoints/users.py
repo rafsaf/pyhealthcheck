@@ -1,13 +1,13 @@
-from typing import Any
-
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app import models, schemas
-from .. import deps
 from app.core.security import get_password_hash
 from app.models import User
+
+from .. import deps
 
 router = APIRouter(prefix="/users")
 

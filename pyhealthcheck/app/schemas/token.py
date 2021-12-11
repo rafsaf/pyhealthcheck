@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
+from pydantic.fields import Field
 
 
 class Token(BaseModel):
@@ -18,4 +19,4 @@ class TokenPayload(BaseModel):
 
 
 class TokenRefresh(BaseModel):
-    refresh_token: str
+    refresh_token: str = Field(max_length=200)

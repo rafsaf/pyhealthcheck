@@ -1,9 +1,11 @@
 from typing import List, Optional
+
 from pydantic import BaseModel
+from pydantic.fields import Field
 
 
 class ManyPings(BaseModel):
-    hostname_list: List[str]
+    hostname_list: List[str] = Field(max_items=100)
 
     class Config:
         schema_extra = {
@@ -14,14 +16,14 @@ class ManyPings(BaseModel):
 
 
 class SinglePing(BaseModel):
-    hostname: str
+    hostname: str = Field(max_length=1000)
 
     class Config:
         schema_extra = {"example": {"hostname": "rafsaf.pl"}}
 
 
 class SinglePingResponse(BaseModel):
-    hostname: str
+    hostname: str = Field(max_length=1000)
     live: bool
     delay: Optional[float]
     message: str

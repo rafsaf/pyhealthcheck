@@ -3,6 +3,7 @@ Main FastAPI app instance declaration
 """
 from time import time
 from typing import Any
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
