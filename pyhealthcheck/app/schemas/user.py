@@ -23,9 +23,13 @@ class UserWorkerWithPassword(User):
 
 
 class UserUpdate(BaseUser):
-    username: Optional[str] = Field(max_length=254)
     password: Optional[str] = Field(max_length=32)
     full_name: Optional[str] = Field(max_length=254)
+
+
+class UserUpdateAdmin(UserUpdate):
+    is_root: Optional[bool]
+    is_maintainer: Optional[bool]
 
 
 class UserCreate(BaseUser):
@@ -35,6 +39,7 @@ class UserCreate(BaseUser):
 
 class WorkerUserCreate(BaseUser):
     register_key: str
+    healthstack_id: int
 
 
 class UserGet(BaseUser):

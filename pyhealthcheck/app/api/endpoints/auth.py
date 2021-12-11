@@ -10,12 +10,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import JSONResponse
 
-from app import schemas
+from app import models, schemas
+from app.api import deps
 from app.core import security
 from app.core.config import settings
 from app.models import User
-
-from .. import deps
 
 router = APIRouter(prefix="/auth")
 
@@ -160,6 +159,22 @@ async def register_worker(
             status_code=404,
             content={"message": "Provided register key is not valid."},
         )
+    result = await session.execute(
+        select(models.HealthStack).where(
+            models.HealthStack.id == new_worker.healthstack_id
+        )
+    )
+    healthstack: Optional[models.HealthStack] = result.scalars().first()
+    if healthstack is None:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "HealthStack not found"},
+        )
+    if healthstack.worker_id:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "HealthStack already has a worker"},
+        )
     username = str(uuid.uuid4())
     password = secrets.token_urlsafe()
 
@@ -172,5 +187,18 @@ async def register_worker(
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    await session.refresh(healthstack)
+
+    if healthstack.worker_id:
+        await session.delete(user)
+        await session.commit()
+        return JSONResponse(
+            status_code=404,
+            content={"message": "HealthStack already has a worker"},
+        )
+
+    healthstack.worker_id = user.id
+    session.add(healthstack)
+    await session.commit()
 
     return schemas.UserWorkerWithPassword(**user.__dict__, password=password)

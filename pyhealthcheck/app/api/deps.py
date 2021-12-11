@@ -64,3 +64,12 @@ async def get_root_user(current_user: User = Depends(get_current_user)) -> User:
             detail="Could not validate credentials",
         )
     return current_user
+
+
+async def get_worker_user(current_user: User = Depends(get_current_user)) -> User:
+    if not current_user.is_worker:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    return current_user
