@@ -48,6 +48,18 @@ filterwarnings = [
 [tool.isort]
 profile = "black"
 
+[tool.coverage.run]
+source = [   
+    "app",
+]
+omit = [
+    "*/.venv/*",
+    "*/venv/*",
+    "*__init__.py*",
+    "alembic/*",
+    "*/tests/*",
+]
+
 # [tool.pyright]
 # reportUnusedImport = "warning"
 # reportMissingTypeStubs = "none"
