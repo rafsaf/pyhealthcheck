@@ -13,6 +13,8 @@ from app.core import security
 from app.core.config import settings
 from app.models import User
 from sqlalchemy import select
+import uuid
+import secrets
 
 router = APIRouter(prefix="/auth")
 
@@ -85,7 +87,14 @@ async def refresh_token(
     }
 
 
-@router.post("/register", response_model=schemas.User)
+@router.post(
+    "/register-user",
+    response_model=schemas.User,
+    responses={
+        400: {"model": schemas.ErrorMessage},
+        404: {"model": schemas.ErrorMessage},
+    },
+)
 async def register_me(
     new_user: schemas.UserCreate,
     session: AsyncSession = Depends(deps.get_session),
@@ -129,3 +138,38 @@ async def register_me(
     await session.refresh(user)
 
     return user
+
+
+@router.post(
+    "/register-worker",
+    response_model=schemas.UserWorkerWithPassword,
+    responses={
+        404: {"model": schemas.ErrorMessage},
+    },
+)
+async def register_worker(
+    new_worker: schemas.WorkerUserCreate,
+    session: AsyncSession = Depends(deps.get_session),
+):
+    """
+    Create new worker user, return created user instance with password.
+    """
+    if new_worker.register_key != settings.PYHEALTHCHECK_WORKER_REGISTER_KEY:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "Provided register key is not valid."},
+        )
+    username = str(uuid.uuid4())
+    password = secrets.token_urlsafe()
+
+    user = User(
+        username=username,
+        is_worker=True,
+        hashed_password=security.get_password_hash(password),
+    )
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    return schemas.UserWorkerWithPassword(**user.__dict__, password=password)

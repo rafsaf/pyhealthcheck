@@ -15,6 +15,11 @@ class User(BaseUser):
     full_name: Optional[str]
     is_root: bool
     is_maintainer: bool
+    is_worker: bool
+
+
+class UserWorkerWithPassword(User):
+    password: str
 
 
 class UserUpdate(BaseUser):
@@ -26,6 +31,10 @@ class UserUpdate(BaseUser):
 class UserCreate(BaseUser):
     username: str
     password: str
+
+
+class WorkerUserCreate(BaseUser):
+    register_key: str
 
 
 class UserGet(BaseUser):

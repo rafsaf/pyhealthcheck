@@ -21,7 +21,6 @@ See https://pydantic-docs.helpmanual.io/usage/settings/
 
 from pathlib import Path
 from typing import Dict, List, Literal, Union
-from pydantic.main import BaseModel, BaseConfig
 
 import toml
 from pydantic import AnyHttpUrl, AnyUrl, BaseSettings, EmailStr, validator
@@ -64,7 +63,8 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
 
     # PYHEALTHCHECK SPECIFIC
-    PYHEALTHCHECK_ALLOW_USER_REGISTER: bool = False
+    PYHEALTHCHECK_ALLOW_USER_REGISTER: bool
+    PYHEALTHCHECK_WORKER_REGISTER_KEY: str
 
     # VALIDATORS
     @validator("BACKEND_CORS_ORIGINS")

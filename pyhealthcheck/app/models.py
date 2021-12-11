@@ -24,3 +24,4 @@ class User(Base):
         Boolean, default=False, nullable=False, server_default=false()
     )
     is_root = Column(Boolean, default=False, nullable=False, server_default=false())
+    is_worker = Column(Boolean, default=False, nullable=False, server_default=false())
