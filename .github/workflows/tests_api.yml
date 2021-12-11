@@ -54,11 +54,14 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
+      - name: Copy environment file
+        run: |
+          cp .env.example .env
       - name: Lint with flake8
         run: |
           source .venv/bin/activate 
           # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --exit-zero --statistics
+          flake8 app --count --exit-zero --statistics
       - name: Test
         run: |
           source .venv/bin/activate

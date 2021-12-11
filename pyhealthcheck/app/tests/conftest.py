@@ -1,13 +1,11 @@
 import asyncio
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.security import get_password_hash
 from app.main import app
 from app.models import Base, User
 from app.session import async_engine, async_session

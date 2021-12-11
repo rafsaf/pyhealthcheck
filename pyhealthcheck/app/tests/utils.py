@@ -1,11 +1,12 @@
 import random
 import string
-from typing import Literal, Optional, Tuple
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import User
-from app.core.security import get_password_hash
+from typing import Literal
+
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.security import get_password_hash
+from app.models import User
 
 
 def random_lower_string(length: int = 32) -> str:
