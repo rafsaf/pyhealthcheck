@@ -11,6 +11,7 @@ from app.core.security import get_password_hash
 from app.main import app
 from app.models import Base, User
 from app.session import async_engine, async_session
+from app.tests import utils
 
 
 @pytest.fixture(scope="session")
@@ -50,18 +51,27 @@ async def session(
 
 @pytest.fixture
 async def default_user(session: AsyncSession):
-    result = await session.execute(
-        select(User).where(User.username == "user@email.com")
-    )
-    user: Optional[User] = result.scalars().first()
-    if user is None:
-        new_user = User(
-            username="user@email.com",
-            hashed_password=get_password_hash("password"),
-            full_name="fullname",
-        )
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
-        return new_user
-    return user
+    return await utils.create_user(session)
+
+
+@pytest.fixture
+async def root_user(session: AsyncSession):
+    return await utils.create_user(session, "root")
+
+
+@pytest.fixture
+async def maintainer_user(session: AsyncSession):
+    return await utils.create_user(session, "maintainer")
+
+
+@pytest.fixture
+async def worker_user(session: AsyncSession):
+    return await utils.create_user(session, "worker")
+
+
+@pytest.fixture
+async def get_headers(client: AsyncClient):
+    async def _get_headers(user: User):
+        return await utils.get_header_for_user(user, client)
+
+    return _get_headers

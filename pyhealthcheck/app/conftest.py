@@ -8,3 +8,4 @@ Put here any Pytest related code (it will be executed before `app/tests/...`)
 import os
 
 os.environ["ENVIRONMENT"] = "PYTEST"
+os.environ["SECURITY_BCRYPT_DEFAULT_ROUNDS"] = "1"

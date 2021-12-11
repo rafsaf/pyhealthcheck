@@ -11,9 +11,9 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
 
     # access-token endpoint
     access_token = await client.post(
-        "/auth/access-token",
+        "/v1/auth/access-token",
         data={
-            "username": "user@email.com",
+            "username": default_user.username,
             "password": "password",
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -24,9 +24,8 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
     access_token = token["access_token"]
     refresh_token = token["refresh_token"]
 
-    # test-token endpoint
-    test_token = await client.post(
-        "/auth/test-token", headers={"Authorization": f"Bearer {access_token}"}
+    test_token = await client.get(
+        "/v1/users/me", headers={"Authorization": f"Bearer {access_token}"}
     )
     assert test_token.status_code == 200
     response_user = test_token.json()
@@ -34,7 +33,7 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
 
     # refresh-token endpoint
     get_new_token = await client.post(
-        "/auth/refresh-token", json={"refresh_token": refresh_token}
+        "/v1/auth/refresh-token", json={"refresh_token": refresh_token}
     )
 
     assert get_new_token.status_code == 200

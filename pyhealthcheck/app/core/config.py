@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ENVIRONMENT: Literal["DEV", "PYTEST", "STAGE", "PRODUCTION"]
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    SECURITY_BCRYPT_DEFAULT_ROUNDS: int = 12
     REFRESH_TOKEN_EXPIRE_MINUTES: int
     BACKEND_CORS_ORIGINS: Union[str, List[AnyHttpUrl]]
 

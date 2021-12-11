@@ -41,7 +41,10 @@ addopts = "-v"
 testpaths = [
     "app/tests",
 ]
-
+filterwarnings = [
+    # we are using 1 round of bcrypt in tests so it won't take ages
+    "ignore::passlib.exc.PasslibHashWarning"
+]
 [tool.isort]
 profile = "black"
 
