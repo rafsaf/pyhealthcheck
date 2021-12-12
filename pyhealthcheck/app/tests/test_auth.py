@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-
+from app.tests.utils import reverse
 from app.models import User
 
 # All test coroutines in file will be treated as marked (async allowed).
@@ -11,7 +11,7 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
 
     # access-token endpoint
     access_token = await client.post(
-        "/v1/auth/access-token",
+        reverse("login_access_token"),
         data={
             "username": default_user.username,
             "password": "password",
@@ -25,7 +25,7 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
     refresh_token = token["refresh_token"]
 
     test_token = await client.get(
-        "/v1/users/me", headers={"Authorization": f"Bearer {access_token}"}
+        reverse("read_user_me"), headers={"Authorization": f"Bearer {access_token}"}
     )
     assert test_token.status_code == 200
     response_user = test_token.json()
@@ -33,7 +33,7 @@ async def test_login_endpoints(client: AsyncClient, default_user: User):
 
     # refresh-token endpoint
     get_new_token = await client.post(
-        "/v1/auth/refresh-token", json={"refresh_token": refresh_token}
+        reverse("refresh_token"), json={"refresh_token": refresh_token}
     )
 
     assert get_new_token.status_code == 200

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import get_password_hash
 from app.models import User
+from app.main import app
 
 
 def random_lower_string(length: int = 32) -> str:
@@ -15,6 +16,12 @@ def random_lower_string(length: int = 32) -> str:
 
 def random_email(length: int = 10) -> str:
     return f"{random_lower_string(length)}@{random_lower_string(length)}.com"
+
+
+def reverse(view_function_name: str) -> str:
+    # for route in app.routes:
+    #    print(route.__dict__["path"])
+    return app.url_path_for(view_function_name)
 
 
 async def create_user(
@@ -41,7 +48,7 @@ async def create_user(
 
 async def get_header_for_user(user: User, client: AsyncClient):
     access_token = await client.post(
-        "/v1/auth/access-token",
+        reverse("login_access_token"),
         data={
             "username": user.username,
             "password": "password",

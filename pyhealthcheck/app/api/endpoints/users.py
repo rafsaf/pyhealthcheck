@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.core import security
 from app import models, schemas
 from app.api import deps
 from app.core.security import get_password_hash
@@ -24,6 +24,13 @@ async def update_user_me(
     """
 
     if user_update.password is not None:
+
+        is_password_strong_msg = security.password_strong_message(user_update.password)  # type: ignore
+        if is_password_strong_msg is not None:
+            return JSONResponse(
+                status_code=404,
+                content={"message": is_password_strong_msg},
+            )
         current_user.hashed_password = get_password_hash(user_update.password)  # type: ignore
     if user_update.full_name is not None:
         current_user.full_name = user_update.full_name  # type: ignore
@@ -108,6 +115,12 @@ async def update_other_user(
         )
 
     if user_update.password is not None:
+        is_password_strong_msg = security.password_strong_message(user_update.password)  # type: ignore
+        if is_password_strong_msg is not None:
+            return JSONResponse(
+                status_code=404,
+                content={"message": is_password_strong_msg},
+            )
         user.hashed_password = get_password_hash(user_update.password)  # type: ignore
     if user_update.full_name is not None:
         user.full_name = user_update.full_name  # type: ignore
